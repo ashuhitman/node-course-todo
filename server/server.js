@@ -1,3 +1,5 @@
+require('./config/config');
+
 const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -8,7 +10,7 @@ var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
 
 var app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 app.use(bodyParser.json());
 
 app.post('/todos',(req,res) => {
@@ -67,7 +69,7 @@ app.delete('/todos/:id',(req, res) => {
 app.patch('/todos/:id', (req,res) => {
     var id = req.params.id;
     var body = _.pick(req.body, ['text','completed']);
-   console.log(body);
+
   if(!ObjectID.isValid(id)) {
       return res.status(404).send();
     }
@@ -79,7 +81,7 @@ app.patch('/todos/:id', (req,res) => {
       body.completed = false;
       body.completedAt = null;
     }
-    console.log(body);
+
     Todo.findByIdAndUpdate(id,{$set: body}, {new: true})
     .then((todo) => {
        if(!todo) {
